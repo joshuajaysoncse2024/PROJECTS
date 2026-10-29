@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy and Footprint Toolkit</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Crimson+Text:wght@400;600;700&family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f6;--panel:#fff;--ink:#14213d;--mute:#5b6b82;--line:#d5dde8;--teal:#0f766e;--red:#b42318;--amber:#b7791f;--green:#1b7f4b;--r:10px}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif;background:var(--bg);color:var(--ink);display:grid;grid-template-columns:250px 1fr;min-height:100vh;align-items:start}
+aside{background:var(--ink);color:#e8edf5;padding:8px 14px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:flex-start;align-self:start;gap:10px}
+aside h1{font-size:1.05rem;margin:0;line-height:1.2}aside p{margin:3px 0 0;font-size:.8rem;line-height:1.4;color:#a9b6cb}
+nav{display:flex;flex-direction:column;gap:2px;margin-top:0}
+nav button{all:unset;cursor:pointer;padding:7px 12px;border-radius:8px;color:#d3dbe8}
+nav button:hover{background:#22345a}nav button[aria-current=true]{background:#e8edf5;color:var(--ink);font-weight:700}
+:focus-visible{outline:3px solid #f2b84b;outline-offset:2px}
+.mini{margin-top:auto;display:flex;align-items:center;gap:12px;font-size:.82rem;color:#a9b6cb;line-height:1.3}
+.ring{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:1.25rem;background:conic-gradient(var(--c,#5b6b82) calc(var(--p,0)*1%),#2a3c63 0);flex:none}
+.ring span{width:55px;height:55px;border-radius:50%;background:var(--ink);display:grid;place-items:center;color:#fff}
+main{padding:6px clamp(16px,4vw,54px) 28px;max-width:980px;width:100%;margin:0 auto;align-self:start}
+section{display:none}section.on{display:block}
+h1,h2{font-family:"Merriweather",Georgia,serif;font-weight:700}h3{font-family:"Crimson Text",Georgia,serif;font-weight:700;letter-spacing:.01em}
+h2{font-size:1.65rem;margin:0 0 4px;line-height:1.25}h3{margin:0 0 8px;font-size:1.3rem}
+.lead{color:var(--mute);margin:0 0 14px;max-width:62ch}
+main h2,main h3,main .lead{text-align:left}main .lead{margin-left:0}
+#dash{text-align:center}#dash .lead{margin-left:0;margin-right:auto}#dash .row{justify-content:center}#dash .it,#dash .g2 .card>div>button{text-align:left}#dash .bar{margin-left:auto;margin-right:auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}.g2 .card{margin:0}
+.btn{all:unset;cursor:pointer;background:var(--teal);color:#fff;padding:9px 16px;border-radius:8px;font-weight:700;font-size:.95rem}
+.btn:hover{background:#0b5d57}.btn.alt{background:#fff;color:var(--ink);border:1px solid var(--line)}.btn.sm{padding:5px 11px;font-size:.85rem}
+textarea,input[type=text],input[type=password]{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:140px;resize:vertical}
+.row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.sub{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.sub button{all:unset;cursor:pointer;padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:.92rem}
+.sub button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sub b{margin-left:6px;font-size:.8rem;opacity:.8}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;width:0;background:var(--c,var(--red));transition:width .25s}
+.it{display:grid;grid-template-columns:auto 1fr auto;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);align-items:start}
+.it:last-child{border:0}.it input{width:20px;height:20px;margin-top:3px;accent-color:var(--teal)}
+.it em,.note{font-style:normal;color:var(--mute);font-size:.86rem}.it em{display:block}
+.tag{font-size:.76rem;font-weight:700;padding:2px 8px;border-radius:99px;height:fit-content;white-space:nowrap}
+.high{background:#fde7e4;color:var(--red)}.med{background:#fbefd5;color:#8a5a0b}.low{background:#e0efe6;color:var(--green)}
+code{background:#eef2f6;padding:1px 6px;border-radius:4px;word-break:break-all}
+.prev{background:#f7f9fb;border:1px solid var(--line);border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-word;margin-top:12px}
+mark{background:#fde7e4;color:var(--red);border-radius:3px;padding:0 2px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:5px 11px;font-size:.84rem}.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--teal);color:#fff}.seg button.bad[aria-pressed=true]{background:var(--red)}.seg button.nf[aria-pressed=true]{background:var(--mute)}
+.pf{display:grid;grid-template-columns:1fr auto;gap:8px 12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.pf:last-child{border:0}.pf a{color:var(--teal);font-weight:700}
+.opt{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:.92rem;align-items:center}
+.gen{display:flex;gap:8px;margin-top:10px}.gen code{flex:1;font-size:1.05rem;padding:9px 12px}
+.qz p{margin:0 0 8px}.qz .msg{background:#f7f9fb;border-left:4px solid var(--line);padding:10px 12px;border-radius:6px;margin-bottom:10px}
+.fb{margin-top:8px;font-size:.92rem}
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.tips p{margin:0;color:var(--mute);font-size:.92rem}
+/* ---------- Animations ---------- */
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes popIn{0%{opacity:0;transform:scale(.9) translateY(12px)}60%{opacity:1;transform:scale(1.025)}100%{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@keyframes press{0%{transform:scale(1)}35%{transform:scale(.86)}70%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(242,184,75,.55)}50%{box-shadow:0 0 0 14px rgba(242,184,75,0)}}
+.btn{display:inline-block}
+.btn,nav button,.sub button,.seg button{transition:transform .15s ease,background .2s ease,box-shadow .2s ease,color .2s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(20,33,61,.22)}
+nav button:hover{transform:translateX(4px)}
+.sub button:hover{transform:translateY(-2px)}
+.btn:active,nav button:active,.sub button:active,.seg button:active{transform:scale(.93)}
+.pop{animation:press .38s ease}
+.card{transition:transform .2s ease,box-shadow .2s ease}
+.g2 .card:hover,.tips .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(20,33,61,.12)}
+section.on>*{animation:rise .5s ease both}
+section.on>*:nth-child(2){animation-delay:.06s}section.on>*:nth-child(3){animation-delay:.12s}section.on>*:nth-child(4){animation-delay:.18s}section.on>*:nth-child(5){animation-delay:.24s}section.on>*:nth-child(6){animation-delay:.3s}
+section.on .g2>*,section.on .tips>*{animation:popIn .55s ease both}
+section.on .g2>*:nth-child(2),section.on .tips>*:nth-child(2){animation-delay:.1s}section.on .tips>*:nth-child(3){animation-delay:.15s}section.on .tips>*:nth-child(4){animation-delay:.2s}section.on .tips>*:nth-child(5){animation-delay:.25s}section.on .tips>*:nth-child(6){animation-delay:.3s}
+body:not(.login) aside{animation:slideIn .5s ease both}
+body:not(.login) main{animation:rise .5s ease .1s both}
+#landing h1{animation:popIn .8s ease both}
+#landing .btn{animation:popIn .8s ease .25s both,glow 2.2s ease-in-out 1.2s infinite}
+.fx{animation:popIn .4s ease both}
+#landing{display:none;min-height:100vh;place-items:center;text-align:center;padding:24px;background:linear-gradient(160deg,#14213d 0%,#1d3557 60%,#0f766e 140%);color:#fff}
+#landing .box{max-width:640px}
+#landing h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.2;margin:0 0 28px}
+#landing p{font-family:"Crimson Text",Georgia,serif;font-size:1.35rem;line-height:1.45;color:#d3dbe8;margin:0 0 28px}
+#landing .btn{display:inline-block;padding:13px 38px;font-size:1.1rem;background:#f2b84b;color:#14213d}
+#landing .btn:hover{background:#e6a835}
+body.login{display:block}body.login aside,body.login main{display:none}body.login #landing{display:grid}
+.out{margin-top:10px;align-self:flex-start}
+/* ---------- Dashboard: larger, fills the page ---------- */
+main:has(#dash.on){max-width:1320px;padding-top:18px}
+#dash h2{font-size:2.2rem;margin-bottom:8px}
+#dash .lead{font-size:1.2rem;max-width:none;margin-bottom:22px}
+#dash .g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:24px}
+#dash .card{padding:30px}
+#dash .g2 .card{display:flex;flex-direction:column}
+#dash .g2 .card>div{flex:1}
+#dash h3{font-size:1.8rem;margin-bottom:16px}
+#dash .bar{height:14px;margin:10px 0}
+#dash .note,#dash .it em{font-size:1.08rem}
+#dash .it{padding:18px 0;font-size:1.15rem;gap:18px}
+#dash .btn{font-size:1.1rem;padding:14px 26px}
+#dash .btn.sm{font-size:1.08rem;padding:12px 20px}
+#dash code{font-size:1.08rem}
+#dash #dFp p{font-size:1.15rem;line-height:1.9}
+#dash .row{margin-top:20px;gap:14px}
+@media(max-width:780px){body{grid-template-columns:1fr}aside{position:static;height:auto}nav{flex-direction:row;flex-wrap:wrap}.mini{margin:0}}
+@media print{aside,.btn,.sub,.seg{display:none!important}body{display:block}section{display:none}section.on{display:block}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body class="login">
+<div id="landing"><div class="box">
+  <h1>Privacy and Footprint Toolkit</h1>
+  <button class="btn" id="loginBtn" data-a="login">Log in</button>
+</div></div>
+<aside>
+  <nav id="nav"></nav>
+  <div class="mini"><div class="ring" id="ring"><span id="ringN">0</span></div><div>Overall settings score</div></div>
+  <button class="btn alt sm out" data-a="logout">Log out</button>
+</aside>
+<main>
+
+<section id="dash">
+  <h2>Dashboard</h2>
+  <p class="lead">Your privacy position across every tool. Tick items in the audit and mark profiles in the footprint tracker to update it.</p>
+  <div class="g2">
+    <div class="card"><h3>Settings by platform</h3><div id="dPl"></div></div>
+    <div class="card"><h3>Digital footprint</h3><div id="dFp"></div></div>
+  </div>
+  <div class="card" style="margin-top:24px"><h3>Do these next</h3><div id="dAct"></div></div>
+  <div class="row"><button class="btn" id="prt">Print or save report</button><button class="btn alt" id="rst">Reset all progress</button></div>
+</section>
+
+<section id="audit">
+  <h2>Platform audit</h2>
+  <p class="lead">Pick a platform, then work through its settings. Each item shows where to find it. Menu names change between app versions, so use the path as a guide.</p>
+  <div class="sub" id="plTabs"></div>
+  <div class="card" id="plBody"></div>
+</section>
+
+<section id="post">
+  <h2>Post risk scanner</h2>
+  <p class="lead">Type or paste a caption, bio or message. Risky details are flagged live, and you can remove them one at a time.</p>
+  <div class="card">
+    <textarea id="postIn" placeholder="Paste your post here…"></textarea>
+    <div class="row"><button class="btn alt sm" id="sample">Try a sample post</button><button class="btn sm" id="redAll">Remove all flagged</button><button class="btn alt sm" id="cpy">Copy text</button><span class="note" id="riskLbl"></span></div>
+    <div class="bar"><i id="risk"></i></div>
+    <div id="postOut"></div>
+  </div>
+</section>
+
+<section id="pass">
+  <h2>Password lab</h2>
+  <p class="lead">Test a password, check it against known breaches, or generate a strong one.</p>
+  <div class="card"><h3>Test a password</h3>
+    <input type="password" id="pw" autocomplete="off" aria-label="Password to test" placeholder="Type a password to test">
+    <div class="bar"><i id="pwBar"></i></div><div id="pwOut" class="note">Start typing to see strength and estimated crack time.</div>
+    <div class="row"><button class="btn sm" id="pwBreach">Check for breaches</button><label class="note"><input type="checkbox" id="pwShow"> Show password</label></div>
+    <div id="pwBr" style="margin-top:10px"></div>
+    <p class="note">Only the first 5 characters of the password’s hash are sent to the Have I Been Pwned service. Needs an internet connection.</p>
+  </div>
+  <div class="card"><h3>Generate a password</h3>
+    <div class="opt"><label>Length <b id="lenV">18</b> <input type="range" id="len" min="10" max="32" value="18"></label>
+    <label><input type="checkbox" id="oU" checked> A–Z</label><label><input type="checkbox" id="oN" checked> 0–9</label><label><input type="checkbox" id="oS" checked> Symbols</label></div>
+    <div class="gen"><code id="gOut"></code><button class="btn sm" id="gNew">New</button><button class="btn alt sm" id="gCopy">Copy</button><button class="btn alt sm" id="gTest">Test it</button></div>
+    <p class="note" id="gBits"></p>
+  </div>
+</section>
+
+<section id="foot">
+  <h2>Footprint tracker</h2>
+  <p class="lead">Enter your username. Open each platform, then mark what you find. Anything you did not create should be reported.</p>
+  <div class="card"><div class="row" style="margin:0"><input type="text" id="un" placeholder="Your username" aria-label="Username" style="flex:1;min-width:180px"><input type="text" id="nm" placeholder="Full name (optional)" aria-label="Full name" style="flex:1;min-width:180px"><button class="btn" id="fpGo">Build list</button></div></div>
+  <div class="card" id="fpBody" style="display:none"></div>
+  <div class="card" id="fpSearch" style="display:none"></div>
+</section>
+
+<section id="tips">
+  <h2>Learn</h2>
+  <p class="lead">Test your instincts on real-looking messages, then read the habits that matter most.</p>
+  <div class="card qz"><h3>Scam or legitimate?</h3><div id="quiz"></div></div>
+  <div class="tips" id="tipList"></div>
+</section>
+
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let S={audit:{},fp:{}};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem('ptk')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('ptk',JSON.stringify(S))}catch(e){}};
+const colour=p=>p>=75?'var(--green)':p>=45?'#d99a1c':'#e0574a';
+const TABS=[['dash','Dashboard'],['audit','Platform audit'],['post','Post risk scanner'],['pass','Password lab'],['foot','Footprint tracker'],['tips','Learn']];
+function show(id){$$('section').forEach(s=>s.classList.toggle('on',s.id===id));$$('#nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.v===id));try{location.hash=id}catch(e){}if(id==='dash')renderDash()}
+$('#nav').innerHTML=TABS.map(t=>`<button data-a="tab" data-v="${t[0]}">${t[1]}</button>`).join('');
+
+/* ---------- Platform audit ---------- */
+const PL={
+ig:['Instagram',[['Switch to a private account','Profile > Menu > Settings and privacy > Account privacy',3],['Turn on two-factor authentication','Accounts Center > Password and security > Two-factor authentication',3],['Stop sharing location with posts','Phone Settings > Instagram > Location > Never',3],['Limit who can tag and mention you','Settings and privacy > Tags and mentions',2],['Restrict who can message you','Settings and privacy > Messages and story replies',2],['Remove apps you no longer use','Accounts Center > Your information and permissions > Apps and websites',2],['Hide your activity status','Settings and privacy > Messages and story replies > Show activity status',1]]],
+fb:['Facebook',[['Limit future posts to Friends','Settings and privacy > Settings > Privacy > Who can see your future posts',3],['Turn on two-factor authentication','Settings > Accounts Center > Password and security',3],['Limit visibility of old posts','Settings > Privacy > Limit past posts',2],['Require approval for tags','Settings > Profile and tagging > Review',2],['Hide phone number and email','Settings > Profile information > Contact info',3],['Restrict who can find you by phone or email','Settings > Privacy > How people find and contact you',2]]],
+x:['X',[['Protect your posts if the account is personal','Settings and privacy > Privacy and safety > Audience, media and tagging',2],['Turn on two-factor authentication','Settings and privacy > Security and account access > Security',3],['Turn off precise location','Settings and privacy > Privacy and safety > Location information',3],['Stop discovery by email and phone','Settings and privacy > Privacy and safety > Discoverability and contacts',2],['Limit who can send direct messages','Settings and privacy > Privacy and safety > Direct Messages',2],['Revoke unused connected apps','Settings and privacy > Security and account access > Apps and sessions',2]]],
+li:['LinkedIn',[['Turn on two-step verification','Settings > Sign in and security > Two-step verification',3],['Limit who sees your email address','Settings > Visibility > Who can see or download your email address',3],['Hide your birth date','Settings > Visibility > Who can see your birth date',2],['Hide your connections list','Settings > Visibility > Connections',1],['Choose how you appear when viewing profiles','Settings > Visibility > Profile viewing options',1],['Review data shared with third parties','Settings > Data privacy',2]]],
+wa:['WhatsApp',[['Turn on two-step verification','Settings > Account > Two-step verification',3],['Limit who can add you to groups','Settings > Privacy > Groups',3],['Set profile photo and About to My contacts','Settings > Privacy > Profile photo',2],['Turn off live location sharing','Settings > Privacy > Live location',2],['Silence calls from unknown numbers','Settings > Privacy > Calls',2],['Set a default disappearing-message timer','Settings > Privacy > Default message timer',1]]]};
+let curPl='ig';
+const key=(p,i)=>p+i;
+const plStat=p=>{const it=PL[p][1];const t=it.reduce((a,x)=>a+x[2],0),g=it.reduce((a,x,i)=>a+(S.audit[key(p,i)]?x[2]:0),0);return Math.round(g/t*100)};
+const allScore=()=>{let t=0,g=0;for(const p in PL)PL[p][1].forEach((x,i)=>{t+=x[2];if(S.audit[key(p,i)])g+=x[2]});return Math.round(g/t*100)};
+function renderAudit(){
+  $('#plTabs').innerHTML=Object.keys(PL).map(p=>`<button data-a="pl" data-v="${p}" aria-pressed="${p===curPl}">${PL[p][0]}<b>${plStat(p)}%</b></button>`).join('');
+  const s=plStat(curPl);
+  $('#plBody').innerHTML=`<h3>${PL[curPl][0]} settings: ${s}% done</h3><div class="bar"><i style="width:${s}%;--c:${colour(s)}"></i></div>`+PL[curPl][1].map((x,i)=>{const k=key(curPl,i);return `<div class="it"><input type="checkbox" id="${k}" data-a="tog" data-v="${k}" ${S.audit[k]?'checked':''}><label for="${k}">${x[0]}<em>${x[1]}</em></label><span class="tag ${x[2]==3?'high':x[2]==2?'med':'low'}">${x[2]==3?'Do first':x[2]==2?'Soon':'Later'}</span></div>`}).join('');
+  ring()}
+function ring(){const p=allScore();$('#ring').style.setProperty('--p',p);$('#ring').style.setProperty('--c',colour(p));$('#ringN').textContent=p}
+
+/* ---------- Dashboard ---------- */
+function renderDash(){
+  const a=allScore();
+  $('#dPl').innerHTML=`<div style="font-size:3.4rem;line-height:1.1;font-weight:700;color:${colour(a)}">${a}<small style="font-size:1.5rem;color:var(--mute)"> / 100</small></div>`+Object.keys(PL).map(p=>{const s=plStat(p);return `<button class="btn alt sm" data-a="goPl" data-v="${p}" style="display:block;width:100%;margin-top:14px;text-align:left">${PL[p][0]} <span style="float:right">${s}%</span><div class="bar" style="margin:8px 0 0"><i style="width:${s}%;--c:${colour(s)}"></i></div></button>`}).join('');
+  const f=Object.values(S.fp),me=f.filter(x=>x==='me').length,bad=f.filter(x=>x==='bad').length,nf=f.filter(x=>x==='nf').length,left=Object.keys(FPP).length-f.filter(Boolean).length;
+  $('#dFp').innerHTML=S.fpUser?`<p style="margin:0 0 12px;font-size:1.15rem">Tracking <code>${esc(S.fpUser)}</code></p><p class="note">Your profiles: <b>${me}</b><br>Not yours, needs reporting: <b style="color:${bad?'var(--red)':'inherit'}">${bad}</b><br>Not found: <b>${nf}</b><br>Still to check: <b>${left}</b></p><button class="btn alt sm" data-a="tab" data-v="foot">Open tracker</button>`:`<p class="note">You haven’t built a footprint list yet.</p><button class="btn sm" data-a="tab" data-v="foot">Start tracker</button>`;
+  const todo=[];for(const p in PL)PL[p][1].forEach((x,i)=>{if(!S.audit[key(p,i)])todo.push([x,p,key(p,i)])});todo.sort((a,b)=>b[0][2]-a[0][2]);
+  $('#dAct').innerHTML=todo.length?todo.slice(0,6).map(([x,p,k])=>`<div class="it" style="grid-template-columns:1fr auto"><div>${x[0]} <span class="note">(${PL[p][0]})</span><em>${x[1]}</em></div><button class="btn sm" data-a="done" data-v="${k}">Mark done</button></div>`).join(''):'<p>Every audit item is done. Review again in three months.</p>';
+  ring()}
+
+/* ---------- Post scanner ---------- */
+const luhn=s=>{const n=s.replace(/\D/g,'');if(n.length<13||n.length>19)return false;let sum=0,d=false;for(let i=n.length-1;i>=0;i--){let x=+n[i];if(d){x*=2;if(x>9)x-=9}sum+=x;d=!d}return sum%10===0};
+const RULES=[
+['Aadhaar-style number',/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,'high','Government ID numbers enable identity theft.'],
+['Card number',/\b(?:\d[ -]?){13,19}\b/g,'high','Card numbers can be used for fraud.',luhn],
+['PAN number',/\b[A-Z]{5}\d{4}[A-Z]\b/g,'high','Tax ID numbers are sensitive.'],
+['Phone number',/(?:\+91[\s-]?)?\b[6-9]\d{4}[\s-]?\d{5}\b/g,'high','Phone numbers invite spam, SIM-swap fraud and harassment.'],
+['Email address',/\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g,'med','Emails are used for phishing and account lookups.'],
+['GPS coordinates',/-?\d{1,3}\.\d{4,}\s*,\s*-?\d{1,3}\.\d{4,}/g,'high','Exact coordinates pin down a place.'],
+['Address detail',/\b(?:door|flat|plot|no\.?|#)\s*\d+[\w\/-]*|\b\d{1,4}[,\s]+[A-Za-z ]{3,25}\b(?:street|st|road|rd|nagar|colony|avenue|lane|cross|layout)\b/gi,'high','Street-level detail reveals where you live.'],
+['PIN code',/\b[1-9]\d{5}\b/g,'med','A PIN code narrows down your area.'],
+['Away or alone',/\b(?:home alone|checked in|live location|on vacation|out of town|leaving for|currently at|parents are away)\b/gi,'med','Tells people when you are away or alone.'],
+['School or workplace',/\b(?:i study at|i work at|my school|my college|my office|studying at|working at)\b[^.\n]{0,40}/gi,'med','Combined with other details, this helps identify you.'],
+['Date of birth',/\b(?:dob|born on|date of birth)\b[^.\n]{0,25}/gi,'med','Birth dates are used for identity checks.'],
+['IP address',/\b(?:\d{1,3}\.){3}\d{1,3}\b/g,'low','IP addresses can reveal your network and rough location.']];
+let hits=[];
+function scanNow(){
+  const t=$('#postIn').value,o=$('#postOut');hits=[];
+  if(!t.trim()){o.innerHTML='<p class="note">Findings appear here as you type.</p>';$('#risk').style.width='0';$('#riskLbl').textContent='';return}
+  const all=[];RULES.forEach(([name,re,sev,why,ok])=>{for(const m of t.matchAll(re)){if(ok&&!ok(m[0]))continue;all.push({name,sev,why,text:m[0].trim(),i:m.index})}});
+  all.sort((a,b)=>a.i-b.i||b.text.length-a.text.length);let end=-1;all.forEach(x=>{if(x.i>=end){hits.push(x);end=x.i+x.text.length}});
+  const W={high:30,med:15,low:5},risk=Math.min(100,hits.reduce((a,x)=>a+W[x.sev],0));
+  $('#risk').style.width=risk+'%';$('#risk').style.setProperty('--c',colour(100-risk));
+  $('#riskLbl').textContent=!hits.length?'No risks found':risk<25?'Low risk':risk<60?'Moderate risk':'High risk';
+  let p='',pos=0;hits.forEach(x=>{p+=esc(t.slice(pos,x.i))+`<mark>${esc(x.text)}</mark>`;pos=x.i+x.text.length});p+=esc(t.slice(pos));
+  o.innerHTML=(hits.length?`<div class="prev">${p}</div>`+hits.map((x,i)=>`<div class="it" style="grid-template-columns:auto 1fr auto"><span class="tag ${x.sev}">${{high:'High',med:'Medium',low:'Low'}[x.sev]}</span><div><b>${x.name}:</b> <mark>${esc(x.text)}</mark><em>${x.why}</em></div><button class="btn alt sm" data-a="red" data-v="${i}">Remove</button></div>`).join(''):'<p class="note">Nothing flagged. Read it once as a stranger would, then post.</p>')}
+function redact(list){let t=$('#postIn').value;[...list].sort((a,b)=>b.i-a.i).forEach(x=>{t=t.slice(0,x.i)+'[removed]'+t.slice(x.i+x.text.length)});$('#postIn').value=t;scanNow()}
+
+/* ---------- Password lab ---------- */
+const COMMON=['password','123456','qwerty','abc123','letmein','iloveyou','admin','welcome','monkey','dragon','111111','india','123123'];
+function bitsOf(p){let pool=0;if(/[a-z]/.test(p))pool+=26;if(/[A-Z]/.test(p))pool+=26;if(/\d/.test(p))pool+=10;if(/[^\w]/.test(p))pool+=32;let b=p.length*Math.log2(pool||1);const tips=[];
+  if(COMMON.some(c=>p.toLowerCase().includes(c))){b=Math.min(b,20);tips.push('Contains a very common word or pattern.')}
+  if(/(.)\1{2,}/.test(p)){b-=8;tips.push('Repeated characters.')}
+  if(/(?:0123|1234|2345|abcd|qwer|asdf)/i.test(p)){b-=10;tips.push('Easy sequence.')}
+  if(p.length<12)tips.push('Use 12 or more characters.');return{b:Math.max(0,b),tips}}
+function fmt(s){if(s<1)return'instantly';if(s<60)return Math.round(s)+' seconds';if(s<3600)return Math.round(s/60)+' minutes';if(s<86400)return Math.round(s/3600)+' hours';if(s<2.6e6)return Math.round(s/86400)+' days';if(s<3.15e9)return Math.round(s/3.15e7)+' years';return'centuries or more'}
+function rate(){const p=$('#pw').value;if(!p){$('#pwBar').style.width='0';$('#pwOut').textContent='Start typing to see strength and estimated crack time.';return}
+  const {b,tips}=bitsOf(p),s=Math.min(100,Math.round(b/80*100));$('#pwBar').style.width=s+'%';$('#pwBar').style.setProperty('--c',colour(s));
+  $('#pwOut').innerHTML=`<b>${s<35?'Weak':s<65?'Fair':s<85?'Strong':'Very strong'}</b>. An attacker with a fast offline setup (10 billion guesses per second) could crack it in about <b>${fmt(Math.pow(2,b)/2e10)}</b>. ${tips.join(' ')}`}
+function rnd(n){const a=new Uint32Array(1),lim=Math.floor(4294967296/n)*n;do crypto.getRandomValues(a);while(a[0]>=lim);return a[0]%n}
+function gen(){const L=+$('#len').value;$('#lenV').textContent=L;let sets=['abcdefghijkmnopqrstuvwxyz'];if($('#oU').checked)sets.push('ABCDEFGHJKLMNPQRSTUVWXYZ');if($('#oN').checked)sets.push('23456789');if($('#oS').checked)sets.push('!@#$%^&*-_=+?');
+  const pool=sets.join('');let out;do{out=Array.from({length:L},()=>pool[rnd(pool.length)]).join('')}while(!sets.every(s=>[...out].some(c=>s.includes(c))));
+  $('#gOut').textContent=out;$('#gBits').textContent=`About ${Math.round(L*Math.log2(pool.length))} bits of randomness, created with your browser’s secure random generator. Store it in a password manager.`}
+
+/* ---------- Footprint tracker ---------- */
+const FPP={ig:['Instagram',u=>`https://www.instagram.com/${u}/`,'Check the bio, photos and tagged posts.'],x:['X',u=>`https://x.com/${u}`,'Look for old replies that show personal details.'],fb:['Facebook',u=>`https://www.facebook.com/${u}`,'Check profile photos, friends list and About section.'],li:['LinkedIn',u=>`https://www.linkedin.com/in/${u}`,'Employer, city and contact details are often public.'],gh:['GitHub',u=>`https://github.com/${u}`,'Commits can expose your email address.'],rd:['Reddit',u=>`https://www.reddit.com/user/${u}`,'Old comments may mention your city, school or job.'],yt:['YouTube',u=>`https://www.youtube.com/@${u}`,'Check video descriptions and comments.'],tt:['TikTok',u=>`https://www.tiktok.com/@${u}`,'Check location tags and linked accounts.'],pi:['Pinterest',u=>`https://www.pinterest.com/${u}/`,'Public boards can reveal plans and addresses.'],sc:['Snapchat',u=>`https://www.snapchat.com/add/${u}`,'Check Snap Map and public stories.']};
+function renderFp(){const u=S.fpUser;if(!u){$('#fpBody').style.display=$('#fpSearch').style.display='none';return}
+  $('#un').value=u;$('#nm').value=S.fpName||'';
+  const f=Object.values(S.fp),done=f.filter(Boolean).length,pct=Math.round(done/Object.keys(FPP).length*100),bad=f.filter(x=>x==='bad').length;
+  $('#fpBody').style.display='block';
+  $('#fpBody').innerHTML=`<h3>${done} of ${Object.keys(FPP).length} platforms checked</h3><div class="bar"><i style="width:${pct}%;--c:var(--teal)"></i></div>`+(bad?`<p class="tag high" style="display:inline-block">${bad} profile${bad>1?'s':''} not yours. Use each platform’s “Report impersonation” option.</p>`:'')+Object.keys(FPP).map(k=>{const [n,fn,h]=FPP[k],st=S.fp[k]||'',b=(v,l,c)=>`<button class="${c}" data-a="fp" data-v="${k}:${v}" aria-pressed="${st===v}">${l}</button>`;
+    return `<div class="pf"><div><a href="${fn(encodeURIComponent(u))}" target="_blank" rel="noopener noreferrer">${n}</a><br><span class="note">${h}</span></div><div class="seg" role="group" aria-label="${n} result">${b('me','It’s me','')}${b('bad','Not me','bad')}${b('nf','Not found','nf')}</div></div>`}).join('');
+  const q=[`"${u}"`];if(S.fpName)q.push(`"${S.fpName}"`);
+  $('#fpSearch').style.display='block';
+  $('#fpSearch').innerHTML=`<h3>Search the open web</h3><p class="note">Opens a normal web search in a new tab. Look for contact details, addresses and old accounts.</p>`+q.flatMap(x=>[[x,'Everything public'],[x+' phone OR email OR address','Contact details'],[x+' site:linkedin.com OR site:facebook.com','Social profiles']]).map(([s,d])=>`<div class="pf" style="grid-template-columns:1fr auto"><div><code>${esc(s)}</code><br><span class="note">${d}</span></div><a href="https://www.google.com/search?q=${encodeURIComponent(s)}" target="_blank" rel="noopener noreferrer">Search</a></div>`).join('')}
+
+/* ---------- Learn ---------- */
+const QZ=[['“Your account will be suspended in 24 hours. Verify now: http://insta-verify-support.xyz/login”',1,'Scam. Platforms don’t threaten suspension through links on unrelated domains. Go to the app directly.'],['An email from the address on your bank’s official site says a new device logged in, with no link, only “open the app to review”.',0,'Legitimate style. It asks you to open the app yourself instead of clicking a link.'],['A DM from a friend: “Is this you in this video?? lol” followed by a short link.',1,'Scam. Hijacked accounts spread this. Ask the friend through another channel.'],['“We’ve received a login code request. If it wasn’t you, ignore this message. Never share this code.”',0,'Legitimate if you just tried to sign in. If you didn’t, change your password and check your security settings.'],['“You won a ₹50,000 gift voucher. Send your Aadhaar and phone OTP to claim.”',1,'Scam. No genuine prize needs an OTP or ID number.']];
+const qa={};
+function renderQuiz(){$('#quiz').innerHTML=QZ.map((q,i)=>`<div style="margin-bottom:16px"><div class="msg">${q[0]}</div><div class="row" style="margin:0"><button class="btn alt sm" data-a="q" data-v="${i}:1">Scam</button><button class="btn alt sm" data-a="q" data-v="${i}:0">Legitimate</button></div><div class="fb">${qa[i]===undefined?'':(qa[i]===q[1]?'<b style="color:var(--green)">Correct.</b> ':'<b style="color:var(--red)">Not quite.</b> ')+q[2]}</div></div>`).join('')+(Object.keys(qa).length===QZ.length?`<p><b>Score: ${QZ.filter((q,i)=>qa[i]===q[1]).length} of ${QZ.length}</b></p>`:'')}
+const TIPS=[['Oversharing','Post trips after you return. Avoid uniforms, house numbers and boarding passes in photos.'],['Social engineering','Scammers use details from your posts to sound trustworthy. Less public detail means a weaker story.'],['Photo metadata','Photos can carry GPS data. Most big platforms strip it, but messaging apps and email may not.'],['Account recovery','Keep recovery email and phone current, and save backup codes offline.'],['Old accounts','Delete accounts you no longer use. They are leaks waiting to happen.'],['Tagging others','Ask before posting friends’ photos or locations. Their privacy is part of yours.']];
+$('#tipList').innerHTML=TIPS.map(t=>`<div class="card"><h3>${t[0]}</h3><p>${t[1]}</p></div>`).join('');
+
+/* ---------- Events ---------- */
+function popEl(el){el.classList.remove('fx');void el.offsetWidth;el.classList.add('fx')}
+document.addEventListener('click',e=>{const bt=e.target.closest('button');if(bt){bt.classList.remove('pop');void bt.offsetWidth;bt.classList.add('pop');setTimeout(()=>bt.classList.remove('pop'),420)}
+  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,v=b.dataset.v;
+  if(a==='login')enter();
+  else if(a==='logout')leave();
+  else if(a==='tab')show(v);
+  else if(a==='goPl'){curPl=v;renderAudit();show('audit')}
+  else if(a==='pl'){curPl=v;renderAudit()}
+  else if(a==='tog'){S.audit[v]=b.checked;save();renderAudit();const el=document.getElementById(v);if(el)el.focus()}
+  else if(a==='done'){S.audit[v]=true;save();renderDash()}
+  else if(a==='red')redact([hits[+v]]);
+  else if(a==='fp'){const [k,st]=v.split(':');S.fp[k]=S.fp[k]===st?'':st;save();renderFp()}
+  else if(a==='q'){const [i,ans]=v.split(':').map(Number);qa[i]=ans;renderQuiz();const f=$$('#quiz .fb')[i];if(f)popEl(f)}});
+$('#postIn').addEventListener('input',scanNow);
+$('#sample').onclick=()=>{$('#postIn').value='Finally at the airport, leaving for Goa tonight! Parents are away so the house is empty till Sunday. Text me on 98765 43210 or priya.k@mail.com. I study at Sunrise College, 12, Gandhi Nagar colony, Chennai 600043.';scanNow()};
+$('#redAll').onclick=()=>redact(hits);
+$('#cpy').onclick=async()=>{try{await navigator.clipboard.writeText($('#postIn').value);$('#cpy').textContent='Copied'}catch(e){$('#postIn').select()}setTimeout(()=>$('#cpy').textContent='Copy text',1500)};
+new MutationObserver(()=>{if($('#pwBr').firstChild)popEl($('#pwBr'))}).observe($('#pwBr'),{childList:true});
+$('#pw').addEventListener('input',()=>{rate();$('#pwBr').innerHTML=''});
+$('#pwShow').onchange=e=>$('#pw').type=e.target.checked?'text':'password';
+$('#pwBreach').onclick=async()=>{const p=$('#pw').value,o=$('#pwBr');if(!p){o.textContent='Type a password first.';return}o.textContent='Checking…';
+  try{const h=[...new Uint8Array(await crypto.subtle.digest('SHA-1',new TextEncoder().encode(p)))].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase();
+    const r=await fetch('https://api.pwnedpasswords.com/range/'+h.slice(0,5));if(!r.ok)throw 0;
+    const l=(await r.text()).split('\n').find(x=>x.startsWith(h.slice(5)));
+    o.innerHTML=l?`<span class="tag high">Breached</span> Seen ${(+l.split(':')[1]).toLocaleString()} times in known leaks. Do not use it.`:'<span class="tag low">Not found</span> Not in known breaches. Keep it unique to this account.'}
+  catch(e){o.textContent='Could not reach the breach service. Check your connection and try again.'}};
+['len','oU','oN','oS'].forEach(i=>$('#'+i).addEventListener('input',gen));$('#gNew').onclick=gen;
+$('#gCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#gOut').textContent);$('#gCopy').textContent='Copied'}catch(e){}setTimeout(()=>$('#gCopy').textContent='Copy',1500)};
+$('#gTest').onclick=()=>{$('#pw').value=$('#gOut').textContent;rate()};
+$('#fpGo').onclick=()=>{const u=$('#un').value.trim().replace(/^@/,'');if(!u){$('#un').focus();return}
+  if(u!==S.fpUser)S.fp={};S.fpUser=u;S.fpName=$('#nm').value.trim();save();renderFp();renderDash()};
+$('#prt').onclick=()=>window.print();
+$('#rst').onclick=()=>{if(confirm('Clear all saved progress?')){S={audit:{},fp:{}};save();renderAudit();renderFp();renderDash();$('#un').value=$('#nm').value=''}};
+
+renderAudit();renderFp();renderQuiz();gen();scanNow();renderDash();
+function enter(){document.body.classList.remove('login');show('dash');window.scrollTo(0,0)}
+function leave(){document.body.classList.add('login');window.scrollTo(0,0)}
+</script>
+</body>
+</html>
