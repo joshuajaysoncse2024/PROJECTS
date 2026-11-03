@@ -8,11 +8,7 @@ Open `index.html` in a modern web browser. Progress is stored in the browser usi
 
 ## Deploy with GitHub Pages
 
-In the repository, open **Settings → Pages**. Choose **Deploy from a branch**, select `main` and the `/ (root)` folder, then save. Because this project is inside a subfolder, open the project at:
-
 `https://joshuajaysoncse2024.github.io/PROJECTS/Privacy-and-Footprint-Toolkit/`
-
-If Pages is not enabled for the repository, enable it first. The repository must be public for free GitHub Pages on GitHub Free.
 
 ## Privacy note
 
